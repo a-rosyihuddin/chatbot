@@ -1,8 +1,8 @@
-const sessionName = "yusril";
-const donet = "https://saweria.co/sansekai";
-const owner = ["6287878817169"]; // Put your number here ex: ["62xxxxxxxxx"]
+const sessionName = "Pstar7";
+const donet = "https://saweria.co/Pstar7Dev";
+const owner = ["6289518291377"]; // Put your number here ex: ["62xxxxxxxxx"]
 const {
-  default: sansekaiConnect,
+  default: pstar7Connect,
   useMultiFileAuthState,
   DisconnectReason,
   fetchLatestBaileysVersion,
@@ -149,10 +149,10 @@ async function startHisoka() {
     )
   );
 
-  const client = sansekaiConnect({
+  const client = pstar7Connect({
     logger: pino({ level: "silent" }),
     printQRInTerminal: true,
-    browser: ["Wa-OpenAI - Sansekai", "Safari", "5.1.7"],
+    browser: ["Wa-OpenAI - Pstar7", "Safari", "5.1.7"],
     auth: state,
   });
 
@@ -168,7 +168,7 @@ async function startHisoka() {
       if (!client.public && !mek.key.fromMe && chatUpdate.type === "notify") return;
       if (mek.key.id.startsWith("BAE5") && mek.key.id.length === 16) return;
       m = smsg(client, mek, store);
-      require("./sansekai")(client, m, chatUpdate, store);
+      require("./pstar7dev")(client, m, chatUpdate, store);
     } catch (err) {
       console.log(err);
     }
@@ -265,7 +265,7 @@ async function startHisoka() {
         console.log("Connection Replaced, Another New Session Opened, Please Restart Bot");
         process.exit();
       } else if (reason === DisconnectReason.loggedOut) {
-        console.log(`Device Logged Out, Please Delete Folder Session yusril and Scan Again.`);
+        console.log(`Device Logged Out, Please Delete Folder Session Pstar7 and Scan Again.`);
         process.exit();
       } else if (reason === DisconnectReason.restartRequired) {
         console.log("Restart Required, Restarting...");
@@ -279,7 +279,7 @@ async function startHisoka() {
       }
     } else if (connection === "open") {
       console.log(color("Bot success conneted to server", "green"));
-      console.log(color("Donate for creator https://saweria.co/sansekai", "yellow"));
+      console.log(color("Donate for creator https://saweria.co/Pstar7Dev", "yellow"));
       console.log(color("Type /menu to see menu"));
       client.sendMessage(owner + "@s.whatsapp.net", { text: `Bot started!\n\njangan lupa support ya bang :)\n${donet}` });
     }
