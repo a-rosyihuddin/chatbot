@@ -220,9 +220,9 @@ Kiri Pesan Ke Mantan Doi dengan Anonymous` + supportDonasi
                 `Chat dengan AI.\n\nContoh:\n${prefix}${command} (spasi) \nFor : #6285xxxxx#\nDari : #Mantan Crush#\nPesan : #Sebenernya aku masih suka sama kamu#` +
                   supportDonasi
               );
-              // const chatFor = budy.substr(11,13);
+            
             const chatValue = budy.split('#');
-            client.sendMessage(chatValue[1] + "@s.whatsapp.net", { text: `*Anonymous Chat*\n\nFrom : ${chatValue[3]}\nPesan : ${chatValue[5]}`+ supportDonasi});
+            client.sendMessage(chatValue[1].replace(/[^\d]/g, '') + "@s.whatsapp.net", { text: `*Anonymous Chat*\n\nFrom : ${chatValue[3]}\nPesan : ${chatValue[5]}`+ supportDonasi});
             m.reply(`\n*Pesan Terkirim!!*` + supportDonasi);
           } catch (error) {
             if (error.response) {
