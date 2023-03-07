@@ -1,4 +1,14 @@
-const { BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, proto, generateWAMessageContent, generateWAMessage, prepareWAMessageMedia, areJidsSameUser, getContentType } = require("@adiwajshing/baileys");
+const {
+  BufferJSON,
+  WA_DEFAULT_EPHEMERAL,
+  generateWAMessageFromContent,
+  proto,
+  generateWAMessageContent,
+  generateWAMessage,
+  prepareWAMessageMedia,
+  areJidsSameUser,
+  getContentType,
+} = require("@adiwajshing/baileys");
 const fs = require("fs");
 const util = require("util");
 const chalk = require("chalk");
@@ -23,12 +33,19 @@ module.exports = pstar7 = async (client, m, chatUpdate, store) => {
         : m.mtype == "templateButtonReplyMessage"
         ? m.message.templateButtonReplyMessage.selectedId
         : m.mtype === "messageContextInfo"
-        ? m.message.buttonsResponseMessage?.selectedButtonId || m.message.listResponseMessage?.singleSelectReply.selectedRowId || m.text
+        ? m.message.buttonsResponseMessage?.selectedButtonId ||
+          m.message.listResponseMessage?.singleSelectReply.selectedRowId ||
+          m.text
         : "";
     var budy = typeof m.text == "string" ? m.text : "";
     var prefix = /^[\\/!#.]/gi.test(body) ? body.match(/^[\\/!#.]/gi) : "/";
     const isCmd2 = body.startsWith(prefix);
-    const command = body.replace(prefix, "").trim().split(/ +/).shift().toLowerCase();
+    const command = body
+      .replace(prefix, "")
+      .trim()
+      .split(/ +/)
+      .shift()
+      .toLowerCase();
     const args = body.trim().split(/ +/).slice(1);
     const pushname = m.pushName || "No Name";
     const botNumber = await client.decodeJid(client.user.id);
@@ -41,21 +58,30 @@ module.exports = pstar7 = async (client, m, chatUpdate, store) => {
     const reply = m.reply;
     const sender = m.sender;
     const mek = chatUpdate.messages[0];
-    const supportDonasi= '\n\n*# WABot-OpenAI #*\n*Support kami ya :)*\nDonasi : https://saweria.co/Pstar7Dev';
+    const supportDonasi = "\n\n*• WABot-OpenAI •*\n*Support kami ya :)*\nDonasi : https://saweria.co/Pstar7Dev";
+    const database = [];
 
     const color = (text, color) => {
       return !color ? chalk.green(text) : chalk.keyword(color)(text);
     };
 
     // Group
-    const groupMetadata = m.isGroup ? await client.groupMetadata(m.chat).catch((e) => {}) : "";
+    const groupMetadata = m.isGroup
+      ? await client.groupMetadata(m.chat).catch((e) => {})
+      : "";
     const groupName = m.isGroup ? groupMetadata.subject : "";
 
     // Push Message To Console
     let argsLog = budy.length > 30 ? `${q.substring(0, 30)}...` : budy;
 
     if (isCmd2 && !m.isGroup) {
-      console.log(chalk.black(chalk.bgWhite("[ LOGS ]")), color(argsLog, "turquoise"), chalk.magenta("From"), chalk.green(pushname), chalk.yellow(`[ ${m.sender.replace("@s.whatsapp.net", "")} ]`));
+      console.log(
+        chalk.black(chalk.bgWhite("[ LOGS ]")),
+        color(argsLog, "turquoise"),
+        chalk.magenta("From"),
+        chalk.green(pushname),
+        chalk.yellow(`[ ${m.sender.replace("@s.whatsapp.net", "")} ]`)
+      );
     } else if (isCmd2 && m.isGroup) {
       console.log(
         chalk.black(chalk.bgWhite("[ LOGS ]")),
@@ -71,21 +97,54 @@ module.exports = pstar7 = async (client, m, chatUpdate, store) => {
     if (isCmd2) {
       switch (command) {
         case "help":
-        case "menu":
-          m.reply(`*Whatsapp Bot OpenAI*
-            
+          m.reply(
+`*Whatsapp Bot OpenAI*
+
 *(ChatGPT)*
-Cmd: ${prefix}ai 
+cmd: ${prefix}ai 
+contoh :
+${prefix}ai apa itu Kecerdasan buatan?
+
+*(DALL-E)*
+cmd: ${prefix}img
+contoh :
+${prefix}img buatkan gambar kucing imut
+
+*Anonymous Chat*
+cmd: ${prefix}ac
+contoh:
+${prefix}ac (spasi)
+For : #6285xxxx#
+Dari : #Mantan Crush#
+Pesan : #Sebenernya aku masih suka sama kamu#` + supportDonasi);
+        case "menu":
+          m.reply(
+`*Whatsapp Bot OpenAI*
+
+*(ChatGPT)*
+cmd: ${prefix}ai 
 Tanyakan apa saja kepada AI. 
 
 *(DALL-E)*
-Cmd: ${prefix}img
-Membuat gambar dari teks` + supportDonasi)
+cmd: ${prefix}img
+Membuat gambar dari teks
+
+*Anonymous Chat*
+cmd: ${prefix}ac
+Kiri Pesan Ke Mantan Doi dengan Anonymous` + supportDonasi
+          );
           break;
-        case "ai": case "openai": 
+        case "ai": case "openai":
           try {
-            if (setting.keyopenai === "ISI_APIKEY_OPENAI_DISINI") return reply("Apikey belum diisi\n\nSilahkan isi terlebih dahulu apikeynya di file key.json\n\nApikeynya bisa dibuat di website: https://beta.openai.com/account/api-keys");
-            if (!text) return reply(`Chat dengan AI.\n\nContoh:\n${prefix}${command} Apa itu resesi`);
+            if (setting.keyopenai === "ISI_APIKEY_OPENAI_DISINI")
+              return reply(
+                "Apikey belum diisi\n\nSilahkan isi terlebih dahulu apikeynya di file key.json\n\nApikeynya bisa dibuat di website: https://beta.openai.com/account/api-keys"
+              );
+            if (!text)
+              return reply(
+                `Chat dengan AI.\n\nContoh:\n${prefix}${command} Apa itu resesi` +
+                  supportDonasi
+              );
             const configuration = new Configuration({
               apiKey: setting.keyopenai,
             });
@@ -98,24 +157,31 @@ Membuat gambar dari teks` + supportDonasi)
               max_tokens: 2048, // The maximum number of tokens to generate in the completion. Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
               top_p: 1, // alternative to sampling with temperature, called nucleus sampling
               frequency_penalty: 0.3, // Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.
-              presence_penalty: 0 // Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
-          });
+              presence_penalty: 0, // Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
+            });
             m.reply(`${response.data.choices[0].text}` + supportDonasi);
           } catch (error) {
-          if (error.response) {
-            console.log(error.response.status);
-            console.log(error.response.data);
-            console.log(`${error.response.status}\n\n${error.response.data}`);
-          } else {
-            console.log(error);
-            m.reply("Maaf, sepertinya ada yang error :"+ error.message);
+            if (error.response) {
+              console.log(error.response.status);
+              console.log(error.response.data);
+              console.log(`${error.response.status}\n\n${error.response.data}`);
+            } else {
+              console.log(error);
+              m.reply("Maaf, sepertinya ada yang error :" + error.message);
+            }
           }
-        }
           break;
         case "img": case "ai-img": case "image": case "images":
           try {
-            if (setting.keyopenai === "ISI_APIKEY_OPENAI_DISINI") return reply("Apikey belum diisi\n\nSilahkan isi terlebih dahulu apikeynya di file key.json\n\nApikeynya bisa dibuat di website: https://beta.openai.com/account/api-keys");
-            if (!text) return reply(`Membuat gambar dari AI.\n\nContoh:\n${prefix}${command} Wooden house on snow mountain`);
+            if (setting.keyopenai === "ISI_APIKEY_OPENAI_DISINI")
+              return reply(
+                "Apikey belum diisi\n\nSilahkan isi terlebih dahulu apikeynya di file key.json\n\nApikeynya bisa dibuat di website: https://beta.openai.com/account/api-keys"
+              );
+            if (!text)
+              return reply(
+                `Membuat gambar dari AI.\n\nContoh:\n${prefix}${command} Wooden house on snow mountain` +
+                  supportDonasi
+              );
             const configuration = new Configuration({
               apiKey: setting.keyopenai,
             });
@@ -126,16 +192,46 @@ Membuat gambar dari teks` + supportDonasi)
               size: "512x512",
             });
             //console.log(response.data.data[0].url)
-            client.sendImage(from, response.data.data[0].url, text, mek);
-            } catch (error) {
-          if (error.response) {
-            console.log(error.response.data);
-            m.reply(error.response.data.error.message + supportDonasi);
-          } else {
-            console.log(error);
-            m.reply("Maaf, sepertinya ada yang error :"+ error.message);
+            client.sendImage(
+              from,
+              response.data.data[0].url,
+              text + supportDonasi,
+              mek
+            );
+          } catch (error) {
+            if (error.response) {
+              console.log(error.response.data);
+              m.reply(error.response.data.error.message + supportDonasi);
+            } else {
+              console.log(error);
+              m.reply("Maaf, sepertinya ada yang error :" + error.message);
+            }
           }
-        }
+          break;
+        case "ac": case "anonchat": case "anonymous":
+          try {
+            if (setting.keyopenai === "ISI_APIKEY_OPENAI_DISINI")
+              return reply(
+                "Apikey belum diisi\n\nSilahkan isi terlebih dahulu apikeynya di file key.json\n\nApikeynya bisa dibuat di website: https://beta.openai.com/account/api-keys"
+              );
+            if (!text)
+              return reply(
+                `Chat dengan AI.\n\nContoh:\n${prefix}${command} (spasi) \nFor : #6285xxxxx#\nDari : #Mantan Crush#\nPesan : #Sebenernya aku masih suka sama kamu#` +
+                  supportDonasi
+              );
+              // const chatFor = budy.substr(11,13);
+            const chatValue = budy.split('#');
+            client.sendMessage(chatValue[1] + "@s.whatsapp.net", { text: `*Anonymous Chat*\n\nFrom : ${chatValue[3]}\nPesan : ${chatValue[5]}`+ supportDonasi});
+            m.reply(`\n*Pesan Terkirim!!*` + supportDonasi);
+          } catch (error) {
+            if (error.response) {
+              console.log(error.response.data);
+              m.reply(error.response.data.error.message + supportDonasi);
+            } else {
+              console.log(error);
+              m.reply("Maaf, sepertinya ada yang error :" + error.message);
+            }
+          }
           break;
         default: {
           if (isCmd2 && budy.toLowerCase() != undefined) {
@@ -144,10 +240,20 @@ Membuat gambar dari teks` + supportDonasi)
             if (!budy.toLowerCase()) return;
             if (argsLog || (isCmd2 && !m.isGroup)) {
               // client.sendReadReceipt(m.chat, m.sender, [m.key.id])
-              console.log(chalk.black(chalk.bgRed("[ ERROR ]")), color("command", "turquoise"), color(`${prefix}${command}`, "turquoise"), color("tidak tersedia", "turquoise"));
+              console.log(
+                chalk.black(chalk.bgRed("[ ERROR ]")),
+                color("command", "turquoise"),
+                color(`${prefix}${command}`, "turquoise"),
+                color("tidak tersedia", "turquoise")
+              );
             } else if (argsLog || (isCmd2 && m.isGroup)) {
               // client.sendReadReceipt(m.chat, m.sender, [m.key.id])
-              console.log(chalk.black(chalk.bgRed("[ ERROR ]")), color("command", "turquoise"), color(`${prefix}${command}`, "turquoise"), color("tidak tersedia", "turquoise"));
+              console.log(
+                chalk.black(chalk.bgRed("[ ERROR ]")),
+                color("command", "turquoise"),
+                color(`${prefix}${command}`, "turquoise"),
+                color("tidak tersedia", "turquoise")
+              );
             }
           }
         }
