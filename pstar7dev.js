@@ -58,8 +58,9 @@ module.exports = pstar7 = async (client, m, chatUpdate, store) => {
     const reply = m.reply;
     const sender = m.sender;
     const mek = chatUpdate.messages[0];
-    const supportDonasi = "\n\n*• WABot-OpenAI •*\n*Support kami ya :)*\nDonasi : https://saweria.co/Pstar7Dev";
-    const database = [];
+    const supportDonasi =
+      "\n\n*• WABot-OpenAI •*\n*Support kami ya :)*\nDonasi : https://saweria.co/Pstar7Dev";
+    // const database = [];
 
     const color = (text, color) => {
       return !color ? chalk.green(text) : chalk.keyword(color)(text);
@@ -98,7 +99,7 @@ module.exports = pstar7 = async (client, m, chatUpdate, store) => {
       switch (command) {
         case "help":
           m.reply(
-`*Whatsapp Bot OpenAI*
+            `*Whatsapp Bot OpenAI*
 
 *(ChatGPT)*
 cmd: ${prefix}ai 
@@ -116,11 +117,12 @@ contoh:
 ${prefix}ac (spasi)
 For : #6285xxxx#
 Dari : #Mantan Crush#
-Pesan : #Sebenernya aku masih suka sama kamu#` + supportDonasi);
-	break;
+Pesan : #Sebenernya aku masih suka sama kamu#` + supportDonasi
+          );
+          break;
         case "menu":
           m.reply(
-`*Whatsapp Bot OpenAI*
+            `*Whatsapp Bot OpenAI*
 
 *(ChatGPT)*
 cmd: ${prefix}ai 
@@ -135,7 +137,8 @@ cmd: ${prefix}ac
 Kiri Pesan Ke Mantan Doi dengan Anonymous` + supportDonasi
           );
           break;
-        case "ai": case "openai":
+        case "ai":
+        case "openai":
           try {
             if (setting.keyopenai === "ISI_APIKEY_OPENAI_DISINI")
               return reply(
@@ -172,7 +175,10 @@ Kiri Pesan Ke Mantan Doi dengan Anonymous` + supportDonasi
             }
           }
           break;
-        case "img": case "ai-img": case "image": case "images":
+        case "img":
+        case "ai-img":
+        case "image":
+        case "images":
           try {
             if (setting.keyopenai === "ISI_APIKEY_OPENAI_DISINI")
               return reply(
@@ -209,21 +215,47 @@ Kiri Pesan Ke Mantan Doi dengan Anonymous` + supportDonasi
             }
           }
           break;
-        case "ac": case "anonchat": case "anonymous":
+        case "ac":
+        case "anonchat":
+        case "anonymous":
           try {
-            if (setting.keyopenai === "ISI_APIKEY_OPENAI_DISINI")
-              return reply(
-                "Apikey belum diisi\n\nSilahkan isi terlebih dahulu apikeynya di file key.json\n\nApikeynya bisa dibuat di website: https://beta.openai.com/account/api-keys"
-              );
             if (!text)
               return reply(
-                `Chat dengan AI.\n\nContoh:\n${prefix}${command} (spasi) \nFor : #6285xxxxx#\nDari : #Mantan Crush#\nPesan : #Sebenernya aku masih suka sama kamu#` +
+                `Anonymous Chat.\n\nContoh:\n${prefix}${command} (spasi) \nFor : #6285xxxxx#\nDari : #Mantan Crush#\nPesan : #Sebenernya aku masih suka sama kamu#` +
                   supportDonasi
               );
-            
-            const chatValue = budy.split('#');
-            client.sendMessage(chatValue[1].replace(/[^\d]/g, '') + "@s.whatsapp.net", { text: `*Anonymous Chat*\n\nFrom : ${chatValue[3]}\nPesan : ${chatValue[5]}`+ supportDonasi});
-            m.reply(`\n*Pesan Terkirim!!*` + supportDonasi);
+            const somePromise = new Promise((resolve, reject) => {
+              const chatValue = budy.split("#");
+              if (chatValue[1].replace(/[^\d]/g, "").startsWith(62)) {
+                client.sendMessage(
+                  chatValue[1].replace(/[^\d]/g, "") + "@s.whatsapp.net",
+                  {
+                    text:
+                      `*Anonymous Chat*\n\nFrom : ${chatValue[3]}\nPesan : ${chatValue[5]}` +
+                      supportDonasi,
+                  }
+                );
+                m.reply(`\n*Pesan Terkirim!!*` + supportDonasi);
+              } else {
+                m.reply(`\n*Awali Nomor Dengan 62*` + supportDonasi);
+              }
+            });
+            const result = await somePromise;
+            const chatValue = budy.split("#");
+            if (chatValue[1].replace(/[^\d]/g, "").startsWith(62)) {
+              console.log("oke");
+              client.sendMessage(
+                chatValue[1].replace(/[^\d]/g, "") + "@s.whatsapp.net",
+                {
+                  text:
+                    `*Anonymous Chat*\n\nFrom : ${chatValue[3]}\nPesan : ${chatValue[5]}` +
+                    supportDonasi,
+                }
+              );
+              m.reply(`\n*Pesan Terkirim!!*` + supportDonasi);
+            } else {
+              m.reply(`\n*Awali Nomor Dengan 62*` + supportDonasi);
+            }
           } catch (error) {
             if (error.response) {
               console.log(error.response.data);
