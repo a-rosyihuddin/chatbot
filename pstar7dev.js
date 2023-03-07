@@ -117,6 +117,7 @@ ${prefix}ac (spasi)
 For : #6285xxxx#
 Dari : #Mantan Crush#
 Pesan : #Sebenernya aku masih suka sama kamu#` + supportDonasi);
+	break;
         case "menu":
           m.reply(
 `*Whatsapp Bot OpenAI*
